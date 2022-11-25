@@ -23,7 +23,7 @@ function get_all_code(cells) {
  * @param {vscode.ExtensionContext} context
  */
 function activate(context) {
-	let disposable = vscode.commands.registerCommand('jupyter-extractor.helloWorld', function () {
+	let disposable = vscode.commands.registerCommand('jupyter-extractor.extractCellCode', function () {
 		if (!vscode.window.activeNotebookEditor) {
 			return vscode.window.showErrorMessage('Please open a notebook first!');
 		}

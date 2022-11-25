@@ -10,13 +10,13 @@
     "Other"
   ],
   "activationEvents": [
-    "onCommand:jupyter-extractor.helloWorld"
+    "onCommand:jupyter-extractor.extractCellCode"
   ],
   "main": "./extension.js",
   "contributes": {
     "commands": [{
-      "command": "jupyter-extractor.helloWorld",
-      "title": "Hello World"
+      "command": "jupyter-extractor.extractCellCode",
+      "title": "Extract Cell Code"
     }]
   },
   "scripts": {
