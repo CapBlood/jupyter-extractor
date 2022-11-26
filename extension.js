@@ -20,10 +20,18 @@ function get_all_code(cells) {
 }
 
 function extract_cells(filename) {
+	if (!filename) {
+		return vscode.window.showErrorMessage('You must enter a filename.')
+	}
+
+	const notebook_range = vscode.window.activeNotebookEditor.selection;
+	if (!notebook_range || notebook_range.isEmpty == true) {
+		return vscode.window.showErrorMessage('You must select cells.');
+	}
+
 	const notebook_uri = vscode.window.activeNotebookEditor.notebook.uri
 	const notebook_path = notebook_uri.fsPath;
 	const notebook_folder = path.dirname(notebook_path);
-	const notebook_range = vscode.window.activeNotebookEditor.selection;
 	const notebook_cells = vscode.window.activeNotebookEditor.notebook.getCells(notebook_range);
 	
 	const code = get_all_code(notebook_cells);
@@ -31,11 +39,11 @@ function extract_cells(filename) {
 	fs.writeFile(path.join(notebook_folder, filename), code, (err) => {
 		if (err) {
 			return vscode.window.showErrorMessage(
-				'Failed to create a Python module!'
+				'Failed to create a Python module.'
 			);
 		}
 		
-		vscode.window.showInformationMessage('Created a Python module');
+		vscode.window.showInformationMessage('Created a Python module.');
 	});
 
 	const edit = vscode.NotebookEdit.deleteCells(notebook_range);
