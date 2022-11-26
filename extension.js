@@ -24,6 +24,8 @@ function extract_cells(filename) {
 		return vscode.window.showErrorMessage('You must enter a filename.')
 	}
 
+	const filename_with_ext = `${filename}.py`;
+
 	const notebook_range = vscode.window.activeNotebookEditor.selection;
 	if (!notebook_range || notebook_range.isEmpty == true) {
 		return vscode.window.showErrorMessage('You must select cells.');
@@ -36,7 +38,7 @@ function extract_cells(filename) {
 	
 	const code = get_all_code(notebook_cells);
 	
-	fs.writeFile(path.join(notebook_folder, filename), code, (err) => {
+	fs.writeFile(path.join(notebook_folder, filename_with_ext), code, (err) => {
 		if (err) {
 			return vscode.window.showErrorMessage(
 				'Failed to create a Python module.'
@@ -46,7 +48,10 @@ function extract_cells(filename) {
 		vscode.window.showInformationMessage('Created a Python module.');
 	});
 
-	const edit = vscode.NotebookEdit.deleteCells(notebook_range);
+	// const edit = vscode.NotebookEdit.deleteCells(notebook_range);
+	const import_code = `import ${filename}`;
+	const new_cells = [new vscode.NotebookCellData(vscode.NotebookCellKind.Code, import_code, 'python')];
+	const edit = vscode.NotebookEdit.replaceCells(notebook_range, new_cells);
 	const workspace_edit = new vscode.WorkspaceEdit();
 	workspace_edit.set(notebook_uri, [edit]);
 
