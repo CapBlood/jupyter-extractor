@@ -1,6 +1,7 @@
 const vscode = require('vscode');
 const fs = require('fs');
 const path = require('path');
+const { spawn } = require('child_process');
 
 
 function get_code(cell) {
@@ -14,9 +15,16 @@ function get_code(cell) {
 }
 
 function get_all_code(cells) {
-	const code = cells.map(get_code).join("\n\n\n");
+	const code = cells.map(get_code).join("\n");
 
 	return code;
+}
+
+function lint_py_module(filename) {
+	const lintball = spawn('lintball', ['fix', `${filename}`]);
+	lintball.stderr.on('data', (data) => {
+		vscode.window.showErrorMessage(`Failed to run a Python linter: ${data.toString()}.`);
+	});
 }
 
 function extract_cells(filename) {
@@ -37,18 +45,19 @@ function extract_cells(filename) {
 	const notebook_cells = vscode.window.activeNotebookEditor.notebook.getCells(notebook_range);
 	
 	const code = get_all_code(notebook_cells);
+	const out_path = path.join(notebook_folder, filename_with_ext)
 	
-	fs.writeFile(path.join(notebook_folder, filename_with_ext), code, (err) => {
+	fs.writeFile(out_path, code, (err) => {
 		if (err) {
 			return vscode.window.showErrorMessage(
 				'Failed to create a Python module.'
 			);
 		}
 		
+		lint_py_module(out_path);
 		vscode.window.showInformationMessage('Created a Python module.');
 	});
 
-	// const edit = vscode.NotebookEdit.deleteCells(notebook_range);
 	const import_code = `import ${filename}`;
 	const new_cells = [new vscode.NotebookCellData(vscode.NotebookCellKind.Code, import_code, 'python')];
 	const edit = vscode.NotebookEdit.replaceCells(notebook_range, new_cells);

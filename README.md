@@ -4,4 +4,4 @@ Jupyter extractor allows you to extract your notebook code to separate python mo
 ## Usage
 You need to select some cells in your notebook to extract them. After selection you need to execute the "Extract Cell Code" command.
 
-![Alt Text](./examples/Jupyter%20Extractor.gif)
+![Alt Text](examples/JupyterExtractor.gif)
