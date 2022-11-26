@@ -6,7 +6,7 @@
         {
             "label": "Build package",
             "type": "shell",
-            "command": "vsce package",
+            "command": "vsce package --allow-missing-repository",
             "problemMatcher": [],
             "group": {
                 "kind": "build",
